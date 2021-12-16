@@ -1,0 +1,1 @@
+wmic /node:"node" /user:"user" /password:"pass" process call create "powershell -command \"start-process -filepath powershell -verb runas -argumentlist\" '-command logman stop -n %%a_Collector'" >nul
