@@ -1,0 +1,117 @@
+Chapter 6: User and Group Management
+•	User Login Activity and Information
+o	A list of users who have successfully logged onto the system with valid credentials can be printed with one of the two commands:
+	who – References /run/utmp and displays the following:
+•	The login name of the user
+•	The terminal session device filename
+•	Date and time of the user login
+•	Terminal session type: Graphical (:0), Remote (IP), or Textual
+	w (what)
+•	User Login History and Reboots
+o	The last command reports the history of successful user login and system reboots
+	Consults the /var/log/wtmp file
+	Displays the following for user login history
+•	Login name of the user
+•	File name of the terminal
+•	Terminal name or IP address of where the connection established
+•	Date when connection was established
+•	Log out time or login status (logged in)
+•	Duration of login session (HH:mm)
+	Displays the following for reboot history
+•	Action name (reboot)
+•	Activity name (system reboot)
+•	Linux Kernel version
+•	Date when reboot command was issued
+•	System restart time
+•	Duration of restart (down time) or (still running) if up
+•	Failed User Login History
+o	
+•	User and Group Information on Linux
+o	Get information about a user account by using the id command
+	id <user>
+o	View the current user using the whoami command
+o	View all the groups created on the system using the groups command
+	Use it to view group membership of users, groups <user>
+•	Working as Root
+o	The root user account is used for managing Linux and has no restrictions
+o	When logging into a graphical environment as root, all tasks that are executed are run as root as well. This is not recommended
+•	Running Tasks with Elevated Permissions
+o	Use su to open a subshell as a different user. Commands are executed as root only in the subshell.
+o	Use sudo to execute specific commands with administrative privileges
+o	The PolicyKit command enables you to set up graphical utilities to run with administrative privileges
+•	Using su
+o	The su command opens a subshell as a different user. Commands executed as root are done so only in the subshell.
+	su <user>
+o	The subshell started when using su is an environment where you can work as the target user account, but environment variables are not set
+	Using su – you can start a login shell with the environment variables set, as if you logged in as that user
+•	Using sudo
+o	A system administrator can configure sudo to allow non-administrative users to execute administrative tasks
+	sudo <command>
+o	It is possible to set users with sudo privileges using the following command
+	usermod -aG wheel <user>
+o	You can also use visudo to edit the /etc/sudoers file and gives users access to all commands or specific commands only
+	Edit the line <user> ALL=(ALL) to give a user administrative access to all commands
+o	You can give access to specific commands by editing the following line 
+	<user> ALL=/etc/bin/<command>, etc.
+	mike ALL=/etc/bin/useradd, /etc/bin/passwd
+•	PolicyKit
+o	Use the man pages of pkexec and polkit to review
+•	User Accounts and Service Accounts
+o	Normal user accounts are for people who need to work on a server and access resources
+o	Service accounts (system accounts) are used by services the server is offering
+o	Both users account properties are kept in the /etc/passwd and /etc/shadow files
+o	Group account properties are kept in the /etc/group and /etc/gshadow files
+•	The passwd File
+<picture of /etc/passwd - Gori>
+o	The following is a summary of each field in /etc/passwd above
+	Username – The unique name for the user
+	Password – Legacy password placeholder, since all users can read /etc/passwd, hashed passwords are instead kept in /etc/shadow
+	UID – A unique numerical UID for the user
+•	UID 0 is reserved for root
+•	UID <= 999 are reserved for service (system) accounts
+•	UID >= 1000 are reserved for regular users
+•	UID ranges are defined in /etc/login.defs
+	GID – The primary group ID of the user
+	Comment Field – Optional comment for user accounts
+	Directory – The user’s home directory
+	Shell – The program started after the user successfully logs into the server
+•	Typically /sbin/nologin for service (system) accounts
+•	This account silently denies access to users
+•	You can create an /etc/nologin.txt file where root can log in but all other users see the contents of the text file
+o	Hashed passwords for users are stored in /etc/shadow. Only root has access to this file.
+•	The shadow File
+<picture of /etc/shadow - Gori>
+o	The following is a summary of each field in /etc/shadow above
+	Username – The unique name for the user
+	Encrypted Password – The hashed password for the user
+	Days since Jan. 1, 1970, that the password was last changed – The epoch time since the last password change
+	Days before the password can be changed – Typically set to 0
+	Days after which the password must be changed – Typically set to 99,999 (274 years)
+	Days before password expiration that the user is warned – Used to warn users when a forced password change is coming, default is 7 days
+	Days after password expiration account is disabled – Enforces the password change allowing a grace period, unset by default
+	Days since Jan. 1, 1970, that account is disabled – An administrator can disable an account by a specific date
+	Reserve Field – Unused
+•	The group File
+o	The group file is a plaintext file containing critical group information
+	Each row stores information for one group entry
+	Every user on the system must be a member of at least one group known as the User Private Group (UPG)
+	By default, a UPG name matches the username it is associated with
+<picture of /etc/group – Gori>
+o	The following is a summary of each field in /etc/group
+	Group Name – The name of the group, must begin with a letter
+	Password – Legacy password placeholder, group passwords are instead kept on the /etc/gshadow file
+	GID – A GID for the group
+	Group Members – Lists the members of the group
+•	The gshadow File
+o	Adds a layer of protection at the group level
+o	Group passwords are hashed and stored in /etc/gshadow
+o	The gshadow file has no access permissions at all to safeguard the file contents
+<picture of /etc/gshadow – Gori>
+o	The following is a summary of each field in /etc/gshadow
+	Group Name – The name of the group
+	Password – The hashed password for the group
+•	Can be set with the gpasswd command for non-group members to temporarily access the group using the newgrp command
+•	An ! or null-value in this field allows group members password-less access and restricts non-members from switching into the group
+	Members – Holds a comma-separated list of members
+•	User Creation Configuration Files
+o	
